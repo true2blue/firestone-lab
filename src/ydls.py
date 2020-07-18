@@ -18,7 +18,7 @@ def initialize(context):
     
     # run_daily(sell, time='every_bar', reference_security='000001.XSHG')
     
-    run_daily(clear, time='15:00', reference_security='000001.XSHG')
+    run_daily(clear, time='every_bar', reference_security='000001.XSHG')
     
     run_daily(after_market_close, time='after_close', reference_security='000001.XSHG')
     
@@ -215,7 +215,7 @@ def calculate_sell(context):
                         break    
                     elif (key not in g.stop_win and percent >= g.start_stop_win[key]) or (key in g.stop_win and percent - percent * g.params['stop_win_delta'] > g.stop_win[key]):
                         g.stop_win[key] = percent - percent * g.params['stop_win_delta']
-                        log.info(f'update stop_win, key={key}, stop_win={g.stop_win[key]}, start_stop_win={g.start_stop_win[key]}')
+                        # log.info(f'update stop_win, key={key}, stop_win={g.stop_win[key]}, start_stop_win={g.start_stop_win[key]}')
                     if key not in g.stop_win:
                         g.start_stop_win[key] = percent + g.params['start_win_delta']
                         
