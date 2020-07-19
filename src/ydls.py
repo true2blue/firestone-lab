@@ -70,7 +70,7 @@ def init_buy_list(context):
                 g.buy_list.append(key)
                 
 def filter_only_zt_in_30_days(code_list, date):
-    df = get_price(code_list, count=60, end_date=date, skip_paused=True, frequency='1d', fields=['pre_close','open','close'], fq='pre', panel=False)
+    df = get_price(code_list, count=60, end_date=date, skip_paused=True, frequency='1d', fields=['pre_close','open','close'], fq=None, panel=False)
     df['percent'] = (df['close'] - df['pre_close']) / df['pre_close'] * 100
     df_matched = df[df['percent'] >= 9.90]
     return list(set(df_matched['code'].tolist()))
@@ -152,18 +152,21 @@ def before_market_open(context):
     code_list = get_target_codes(date)
     if len(code_list) == 0:
         return
-    df = get_price(code_list, start_date=date, end_date=date, frequency='daily', fields=['pre_close','open','close'], fq='pre', panel=False)
-    # df_1 = get_price(code_list, count=1, end_date=date - timedelta(days = 1), frequency='5d', fields=['open','close', 'high', 'low'], fq='pre', panel=False)
-    # df_2 = get_price(code_list, count=1, end_date=date - timedelta(days = 1), frequency='15d', fields=['open','close', 'high', 'low'], fq='pre', panel=False)
+    df = get_price(code_list, start_date=date, end_date=date, frequency='daily', fields=['pre_close','open','close'], fq=None, panel=False)
+    df_yest = get_price(code_list, start_date=date - timedelta(days = 1), end_date=date - timedelta(days = 1), frequency='daily', fields=['high_limit','close'], fq=None, panel=False)
+    df_yest = df_yest[df_yest['high_limit'] == df_yest['close']]
+    yest_high_limit = df_yest['code'].tolist()
+    # df_1 = get_price(code_list, count=1, end_date=date - timedelta(days = 1), frequency='5d', fields=['open','close', 'high', 'low'], fq=None, panel=False)
+    # df_2 = get_price(code_list, count=1, end_date=date - timedelta(days = 1), frequency='15d', fields=['open','close', 'high', 'low'], fq=None, panel=False)
     df['open_percent'] = (df['open'] - df['pre_close']) / df['pre_close'] * 100
     # df_1['percent'] = (df_1['close'] - df_1['low']) / df_1['low'] * 100
     # df_2['percent'] = (df_2['close'] - df_2['low']) / df_2['low'] * 100
     df = df[(df['open_percent'] > g.config['open_percent']['min']) & (df['open_percent'] < g.config['open_percent']['max']) & (~df['code'].str.startswith('688'))]
     # df_1 = df_1[(df_1['percent'] < 20) & (~df_1['code'].str.startswith('688'))]
     # df_2 = df_2[(df_2['percent'] < 30) & (~df_2['code'].str.startswith('688'))]
-    # tmp_codes = set(df['code'].tolist()).intersection(set(df_1['code'].tolist()))
+    tmp_codes = [code for code in df['code'].tolist() if code not in yest_high_limit]
     # context.universe = list(set(tmp_codes).intersection(set(df_2['code'].tolist())))
-    context.universe = set(df['code'].tolist())
+    context.universe = set(tmp_codes)
     log.info(f'stock_size = {len(context.universe)}')
     calculate(context)
     
@@ -215,7 +218,7 @@ def calculate_sell(context):
                         break    
                     elif (key not in g.stop_win and percent >= g.start_stop_win[key]) or (key in g.stop_win and percent - percent * g.params['stop_win_delta'] > g.stop_win[key]):
                         g.stop_win[key] = percent - percent * g.params['stop_win_delta']
-                        # log.info(f'update stop_win, key={key}, stop_win={g.stop_win[key]}, start_stop_win={g.start_stop_win[key]}')
+                        log.info(f'update stop_win, key={key}, stop_win={g.stop_win[key]}, start_stop_win={g.start_stop_win[key]}')
                     if key not in g.stop_win:
                         g.start_stop_win[key] = percent + g.params['start_win_delta']
                         
@@ -226,7 +229,7 @@ def calculate(context):
     g.gonna_buy = {}
     date = context.current_dt.date()
     for code in context.universe:
-        panel = get_price(code, start_date=f'{date} 09:30:00', end_date=f'{date} 15:00:00', frequency='1m', fields=['pre_close','open','close', 'money'], skip_paused=False, fq='pre', panel=False)
+        panel = get_price(code, start_date=f'{date} 09:30:00', end_date=f'{date} 15:00:00', frequency='1m', fields=['pre_close','open','close', 'money'], skip_paused=False, fq=None, panel=False)
         # print(panel)
         pre_close = panel.iloc[0]['pre_close']
         open_percent = (panel.iloc[0]['open'] - pre_close) / pre_close * 100
