@@ -46,7 +46,9 @@ def init_config():
         'super_buy' : {
           'days' : '40d',
           'ratio' : 3
-       }
+       },
+       'force_sell_percent_day' : -8.0,
+       'force_sell_percent_n_days' : 25.0
     }
 
 def before_market_open(context):
@@ -98,12 +100,19 @@ def calculate_sell(context):
                 df = get_price(key, start_date=f'{date}', end_date=f'{date}', frequency='1d', fields=['pre_close','close'], skip_paused=True, fq=None, panel=False)
                 if len(df) == 0:
                     continue
+                df = get_price(key, count=1, end_date=date - timedelta(days=1), frequency='4d', fields=['low','high'], skip_paused=True, fq=None, panel=False)
+                df['percent'] = (df['high'] - df['low']) / df['low'] * 100
+                percent_n_days = df.iloc[0]['percent']
                 df = get_price(key, start_date=f'{date} 09:30:00', end_date=f'{date} 15:00:00', frequency='1m', fields=['pre_close','open','close', 'high_limit', 'money'], skip_paused=True, fq=None, panel=False)
                 pre_close = df.iloc[0]['pre_close']
                 stop_win_percent = None
                 for index,row in df.iterrows():
+                    percent_day = (row['close'] - pre_close) / pre_close * 100
                     percent = (row['close'] - stock.acc_avg_cost) / stock.acc_avg_cost * 100
                     sell_time = None
+                    if percent_day < g.config['force_sell_percent_day'] and percent_n_days >= g.config['force_sell_percent_n_days']:
+                        sell_time = str(index)
+                        break
                     if percent < g.config['force_sell_percent'] or g.config['buyed_day'][key] > g.config['force_sell_day']:
                         sell_time = str(index)
                         break
