@@ -1,8 +1,13 @@
 import akshare as ak
 import time
+import logging
+from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
 
 class App(object):
+    
+    _logger = logging.getLogger(__name__)
+    _handler = TimedRotatingFileHandler('logs/firestone-lab.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
     
     def __init__(self):
         self.orginal_df = []
@@ -13,6 +18,11 @@ class App(object):
         self.amount_min = 1000 * 10000
         self.high_low_percent_min = 3.0
         self.high_low_percent_previous_max = 2.0
+        self.setup_logging(logging.INFO)
+        
+    def setup_logging(self, loglevel):
+        logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
+        logging.basicConfig(level=loglevel, format=logformat, datefmt="%Y-%m-%d %H:%M:%S", handlers=[_handler])
 
     def job(self, stock_zh_a_spot_em_df):
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['名称'].str.startswith(('ST', '*'))]
@@ -57,9 +67,9 @@ if __name__ == '__main__':
                 stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
                 res_df = app.job(stock_zh_a_spot_em_df)
                 if res_df is not None:
-                    print(res_df)
+                    App._logger.info(res_df)
                     break
             except Exception as e:
-                print(e)
+                App._logger.error(e)
         time.sleep(3)
     
