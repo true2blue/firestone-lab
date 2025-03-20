@@ -6,13 +6,13 @@ class App(object):
     
     def __init__(self):
         self.orginal_df = []
-        self.window = 15
-        self.period_percent_min = 1.47
+        self.window = 10
+        self.period_percent_min = 3.0
         self.percent_min = 2.0
         self.percent_max = 5.0
         self.amount_min = 1000 * 10000
-        self.high_low_percent_min = 4.0
-        self.high_low_percent_previous_max = 2.5
+        self.high_low_percent_min = 3.0
+        self.high_low_percent_previous_max = 2.0
 
     def job(self, stock_zh_a_spot_em_df):
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['名称'].str.startswith(('ST', '*'))]
@@ -34,13 +34,13 @@ class App(object):
             stock_zh_a_spot_em_df['前期振幅'] = self.orginal_df[-self.window]['振幅']
             # print(stock_zh_a_spot_em_df[['时间', '涨跌幅(window)']])
             stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[
-                (stock_zh_a_spot_em_df['涨跌幅(window)'] >= self.period_percent_min)  
-                & (stock_zh_a_spot_em_df['涨跌幅'] < self.percent_max) 
-                & (stock_zh_a_spot_em_df['涨跌幅'] > self.percent_min)
+                (stock_zh_a_spot_em_df['涨跌幅(window)'] >= self.period_percent_min) 
+                & (stock_zh_a_spot_em_df['涨跌幅'] <= self.percent_max) 
+                & (stock_zh_a_spot_em_df['涨跌幅'] >= self.percent_min)
                 & (stock_zh_a_spot_em_df['成交额(window)'] >= self.amount_min) 
                 & (stock_zh_a_spot_em_df['最高'] == stock_zh_a_spot_em_df['最新价']) 
-                & (stock_zh_a_spot_em_df['前期振幅'] < self.high_low_percent_previous_max)  
-                & (stock_zh_a_spot_em_df['振幅'] > self.high_low_percent_min)
+                & (stock_zh_a_spot_em_df['前期振幅'] <= self.high_low_percent_previous_max)  
+                & (stock_zh_a_spot_em_df['振幅'] >= self.high_low_percent_min)
             ]
             # print(stock_zh_a_spot_em_df['涨跌幅(window)'])
             if not stock_zh_a_spot_em_df.empty:
@@ -51,14 +51,15 @@ class App(object):
 if __name__ == '__main__':
     app = App()
     while True:
-        # if datetime.now().strftime('%H:%M:%S') >= '10:00:00':
-        try:
-            stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
-            res_df = app.job(stock_zh_a_spot_em_df)
-            if res_df is not None:
-                print(res_df)
-                break
-        except Exception as e:
-            print(e)
+        timeStr = datetime.now().strftime('%H:%M:%S')
+        if (timeStr >= '09:45:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
+            try:
+                stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
+                res_df = app.job(stock_zh_a_spot_em_df)
+                if res_df is not None:
+                    print(res_df)
+                    break
+            except Exception as e:
+                print(e)
         time.sleep(3)
     

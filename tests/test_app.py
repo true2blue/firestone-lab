@@ -6,7 +6,7 @@ class TestApp(unittest.TestCase):
     
     def setUp(self):
         self.app = App()
-        self.data = pd.read_csv('data/processed/600178-2025-03-19.csv', dtype={'代码': str})
+        self.data = pd.read_csv('data/processed/300534-2025-03-20.csv', dtype={'代码': str})
 
     def test_job(self):
         res_df = None

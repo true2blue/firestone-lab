@@ -1,11 +1,20 @@
 import pandas as pd
 
 # Load the data from the CSV file
-file_path = 'data/raw/600178-2025-03-19.csv'
-code = '600178'
-name = '东安动力'
-pre_close = 12.10
+file_path = 'data/raw/600097-2025-03-20.csv'
+code = '600097'
+name = '开创国际'
+pre_close = 8.49
 data = pd.read_csv(file_path)
+
+# Ensure numeric columns are properly converted
+numeric_columns = ['成交','金额','笔数']
+for col in numeric_columns:
+    if col in data.columns:
+        data[col] = pd.to_numeric(data[col], errors='coerce')
+
+# Drop rows with NaN in numeric columns
+data = data.dropna(subset=numeric_columns)
 
 # Display the first few rows of the data
 data['时间'] = data['时间'].apply(lambda x: f"0{x}" if len(x) == 4 and x[1] == ':' else x)
@@ -21,5 +30,5 @@ data['涨跌幅'] = ((data['最新价'] - pre_close) / pre_close * 100).round(2)
 data['振幅'] = ((data['最高'] - data['最低']) / pre_close * 100).round(2)
 # Optionally, you can use latest_price_at_0925 for further processing if needed
 # Save the modified data to a new CSV file
-output_file_path = 'data/processed/600178-2025-03-19.csv'
+output_file_path = 'data/processed/600097-2025-03-20.csv'
 data.to_csv(output_file_path, index=False)
