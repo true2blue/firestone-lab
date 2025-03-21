@@ -3,6 +3,9 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
+import configparser
+from .trade import Trade
+from .util import Util
 
 class App(object):
     
@@ -10,19 +13,20 @@ class App(object):
     _handler = TimedRotatingFileHandler('logs/firestone-lab.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
     
     def __init__(self):
+        self.config = configparser.ConfigParser().read('./config/config.ini')
         self.orginal_df = []
-        self.window = 10
-        self.period_percent_min = 3.0
-        self.percent_min = 2.0
-        self.percent_max = 5.0
-        self.amount_min = 1000 * 10000
-        self.high_low_percent_min = 3.0
-        self.high_low_percent_previous_max = 2.0
+        self.window = self.config['params']['window']
+        self.period_percent_min = self.config['params']['period_percent_min']
+        self.percent_min = self.config['params']['percent_min']
+        self.percent_max = self.config['params']['percent_max']
+        self.amount_min = self.config['params']['amount_min']
+        self.high_low_percent_min = self.config['params']['high_low_percent_min']
+        self.high_low_percent_previous_max = self.config['params']['high_low_percent_previous_max']
         self.setup_logging(logging.INFO)
         
     def setup_logging(self, loglevel):
         logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-        logging.basicConfig(level=loglevel, format=logformat, datefmt="%Y-%m-%d %H:%M:%S", handlers=[_handler])
+        logging.basicConfig(level=loglevel, format=logformat, datefmt="%Y-%m-%d %H:%M:%S", handlers=[App._handler])
 
     def job(self, stock_zh_a_spot_em_df):
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['名称'].str.startswith(('ST', '*'))]
@@ -60,14 +64,28 @@ class App(object):
     
 if __name__ == '__main__':
     app = App()
+    if app.config['trade']['enable']:
+        trade = Trade()
+    buy_count = 0
     while True:
+        if buy_count >= app.config['trade']['max_buy_count']:
+            break
         timeStr = datetime.now().strftime('%H:%M:%S')
         if (timeStr >= '09:45:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
             try:
+                if app.config['trade']['enable']:
+                    trade.load_config()
                 stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
                 res_df = app.job(stock_zh_a_spot_em_df)
                 if res_df is not None:
                     App._logger.info(res_df)
+                    if app.config['trade']['enable']:
+                        for index, row in res_df.iterrows():
+                            price = Util.calc_high_limit(row['昨收'])
+                            volumne = Util.calc_buy_voulme(price, app.config['trade']['amount'])
+                            res = trade.createDelegate(index, row['名称'], price, volumne, 'buy')
+                            if res['state'] == 'success':
+                                buy_count += 1
                     break
             except Exception as e:
                 App._logger.error(e)

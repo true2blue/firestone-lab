@@ -32,15 +32,29 @@ class Trade(object):
         }
         self.client = MongoClient(Trade._MONFO_URL, 27017)
         self.db = self.client[os.environ['FR_DB']]
+        self.force_refresh = False
+        self.last_refresh = None
         self.cols = {
             'configs' : 'configs'
-        } 
+        }
+        self.load_config()
     
-    def load_config(self, userId):
-        self.config = self.db[self.cols['configs']].find_one({"userId" : userId})
-        self.__header['gw_reqtimestamp'] = f'{int(time()*1000)}'
-        self.__header['Cookie'] = self.config['cookie']
-        self.__validatekey = self.config['validatekey']
+    def load_config(self):
+        if self.force_refresh or self.is_expired():
+            self.config = self.db[self.cols['configs']].find_one({"userId" : self.config['trade']['user_id']})
+            Trade._logger.info(f'load config = {self.config}')
+            self.__header['gw_reqtimestamp'] = f'{int(time()*1000)}'
+            old_cookie = None
+            if 'Cookie' in self.__header:
+                old_cookie = self.__header['Cookie']
+            self.__header['Cookie'] = self.config['cookie']
+            self.__validatekey = self.config['validatekey']
+            if old_cookie != self.__header['Cookie']:
+                self.last_refresh = datetime.now()
+                self.force_refresh = False
+
+    def is_expired(self):
+        return self.last_refresh is None or (datetime.now() - self.last_refresh).seconds > 60 * 60 * 3
     
     def createDelegate(self, code, name, price, volume, op):
         try:
@@ -76,7 +90,10 @@ class Trade(object):
                     }
                 }
                 return {'state' : 'success', 'result' : message, 'order' : order}
-            return {'state' : 'failed', 'result' : result}
+            else:
+                self.force_refresh = True
+                return {'state' : 'failed', 'result' : result}
         except Exception as e:
             Trade._logger.error('mock code = {}, price = {}, volume = {}, op = {}, faield with exception = {}'.format(code, price, volume, op, e))
+            self.force_refresh = True
             return {'state' : 'failed', 'result' : '创建订单失败'}
