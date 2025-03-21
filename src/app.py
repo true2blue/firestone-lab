@@ -13,15 +13,16 @@ class App(object):
     _handler = TimedRotatingFileHandler('logs/firestone-lab.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
     
     def __init__(self):
-        self.config = configparser.ConfigParser().read('./config/config.ini')
+        self.config = configparser.ConfigParser()
+        self.config.read('./config/config.ini')
         self.orginal_df = []
-        self.window = self.config['params']['window']
-        self.period_percent_min = self.config['params']['period_percent_min']
-        self.percent_min = self.config['params']['percent_min']
-        self.percent_max = self.config['params']['percent_max']
-        self.amount_min = self.config['params']['amount_min']
-        self.high_low_percent_min = self.config['params']['high_low_percent_min']
-        self.high_low_percent_previous_max = self.config['params']['high_low_percent_previous_max']
+        self.window = int(self.config['params']['window'])
+        self.period_percent_min = float(self.config['params']['period_percent_min'])
+        self.percent_min = float(self.config['params']['percent_min'])
+        self.percent_max = float(self.config['params']['percent_max'])
+        self.amount_min = float(self.config['params']['amount_min'])
+        self.high_low_percent_min = float(self.config['params']['high_low_percent_min'])
+        self.high_low_percent_previous_max = float(self.config['params']['high_low_percent_previous_max'])
         self.setup_logging(logging.INFO)
         
     def setup_logging(self, loglevel):
@@ -68,7 +69,7 @@ if __name__ == '__main__':
         trade = Trade()
     buy_count = 0
     while True:
-        if app.config['trade']['enable'] and buy_count >= app.config['trade']['max_buy_count']:
+        if app.config['trade']['enable'] and buy_count >= int(app.config['trade']['max_buy_count']):
             break
         timeStr = datetime.now().strftime('%H:%M:%S')
         if (timeStr >= '09:45:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
@@ -82,7 +83,7 @@ if __name__ == '__main__':
                     if app.config['trade']['enable']:
                         for index, row in res_df.iterrows():
                             price = Util.calc_high_limit(row['昨收'])
-                            volumne = Util.calc_buy_voulme(price, app.config['trade']['amount'])
+                            volumne = Util.calc_buy_voulme(price, float(app.config['trade']['amount']))
                             res = trade.createDelegate(index, row['名称'], price, volumne, 'buy')
                             if res['state'] == 'success':
                                 buy_count += 1
