@@ -21,6 +21,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(len(res_list), 1)
         self.assertEqual(res_list[0]['state'], 'success')
         self.assertEqual(res_list[0]['message'], 'data match, no trade')
+        self.app.close()
 
     def test_run_trade(self):
         self.ydls = Ydls('config-test-trade.ini')
@@ -37,6 +38,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(self.app.get_buy_list()[0], '300534')
         self.assertEqual(res_list[0]['state'], 'success')
         self.assertEqual(res_list[0]['message'], 'trade success')
-
+        self.app.close()
+        
 if __name__ == '__main__':
     unittest.main()
