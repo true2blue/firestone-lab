@@ -1,18 +1,18 @@
 import unittest
 import pandas as pd
-from src.app import App
+from src.strategies.Ydls import Ydls
 
 class TestApp(unittest.TestCase):
     
     def setUp(self):
-        self.app = App()
+        self.ydls = Ydls(config_file='config-test.ini')
         self.data = pd.read_csv('data/processed/300534-2025-03-20.csv', dtype={'代码': str})
 
     def test_job(self):
         res_df = None
         for index, row in self.data.iterrows():
             row_df = pd.DataFrame([row])
-            res_df = self.app.job(row_df)
+            res_df = self.ydls.job(row_df)
             if res_df is not None:
                 print(res_df)                
                 break

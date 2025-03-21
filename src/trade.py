@@ -95,6 +95,6 @@ class Trade(object):
                 self.force_refresh = True
                 return {'state' : 'failed', 'result' : result}
         except Exception as e:
-            Trade._logger.error('mock code = {}, price = {}, volume = {}, op = {}, faield with exception = {}'.format(code, price, volume, op, e))
+            Trade._logger.error('mock code = {}, price = {}, volume = {}, op = {}, faield with exception = {}'.format(code, price, volume, op, e), exc_info=True)
             self.force_refresh = True
             return {'state' : 'failed', 'result' : '创建订单失败'}
