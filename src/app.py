@@ -15,32 +15,42 @@ class App(object):
     def __init__(self, base: Base):
         self.base = base
         self.buy_list = []
+        if self.base.is_trade_enable():
+            self.trade = Trade(self.base.get_user_id())
+
+    def need_trade(self):
+        return hasattr(self, 'trade')
+
+    def get_buy_list(self):
+        return self.buy_list
+    
+    def close(self):
+        if self.need_trade():
+            self.trade.close()
 
     def run(self, stock_zh_a_spot_em_df):
-        if self.base.is_trade_enable():
-            trade = Trade(self.base.get_user_id())
-            if self.base.is_trade_enable() and len(self.buy_list) >= self.base.get_max_buy_count():
-                return {'state': 'complete', 'message': 'reach max buy count', 'data' : self.buy_list}
-            if self.base.is_trade_enable():
-                trade.load_config(self.base.get_user_id())
-            res_df = self.base.job(stock_zh_a_spot_em_df)
-            if res_df is not None:
-                App._logger.info(res_df)
-                if self.base.is_trade_enable():
-                    for index, row in res_df.iterrows():
-                        if index in self.buy_list:
-                            continue
-                        price = Util.calc_high_limit(row['昨收'])
-                        volumne = self.base.get_buy_volume(price)
-                        res = trade.createDelegate(index, row['名称'], price, volumne, 'buy')
-                        if res['state'] == 'success':
-                            self.buy_list.append(index)
-                        if len(self.buy_list) >= self.base.get_max_buy_count():
-                            return {'state': 'complete', 'message': 'reach max buy count', 'data': res_df}
-                    return {'state': 'success', 'message': 'trade success', 'data': res_df}
-                else:
-                    return {'state': 'success', 'message': 'data match, no trade', 'data': res_df}
-            return {'state': 'nodata', 'message': 'no data match'}
+        if self.need_trade() and len(self.buy_list) >= self.base.get_max_buy_count():
+            return {'state': 'complete', 'message': 'reach max buy count', 'data' : self.buy_list}
+        if self.need_trade():
+            self.trade.load_config(self.base.get_user_id())
+        res_df = self.base.job(stock_zh_a_spot_em_df)
+        if res_df is not None:
+            App._logger.info(res_df)
+            if self.need_trade():
+                for index, row in res_df.iterrows():
+                    if index in self.buy_list:
+                        continue
+                    price = Util.calc_high_limit(row['昨收'])
+                    volumne = self.base.get_buy_volume(price)
+                    res = self.trade.createDelegate(index, row['名称'], price, volumne, 'buy')
+                    if res['state'] == 'success':
+                        self.buy_list.append(index)
+                    if len(self.buy_list) >= self.base.get_max_buy_count():
+                        return {'state': 'complete', 'message': 'reach max buy count', 'data': res_df}
+                return {'state': 'success', 'message': 'trade success', 'data': res_df}
+            else:
+                return {'state': 'success', 'message': 'data match, no trade', 'data': res_df}
+        return {'state': 'nodata', 'message': 'no data match'}
 
 if __name__ == '__main__':
 
@@ -48,10 +58,17 @@ if __name__ == '__main__':
     app = App(ydls)
     while True:
         timeStr = datetime.now().strftime('%H:%M:%S')
+        if timeStr > '15:00:00':
+            break
         if (timeStr >= '09:45:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
             try:
                 stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
-                app.run(stock_zh_a_spot_em_df)
+                res = app.run(stock_zh_a_spot_em_df)
+                if res['state'] != 'nodata':
+                    App._logger.info(res)
+                if res['state'] == 'complete':
+                    break
             except Exception as e:
                 App._logger.error(e, exc_info=True)
         time.sleep(3)
+    app.close()

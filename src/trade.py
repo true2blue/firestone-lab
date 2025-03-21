@@ -98,3 +98,7 @@ class Trade(object):
             Trade._logger.error('mock code = {}, price = {}, volume = {}, op = {}, faield with exception = {}'.format(code, price, volume, op, e), exc_info=True)
             self.force_refresh = True
             return {'state' : 'failed', 'result' : '创建订单失败'}
+        
+
+    def close(self):
+        self.client.close()
