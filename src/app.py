@@ -68,7 +68,7 @@ if __name__ == '__main__':
         trade = Trade()
     buy_count = 0
     while True:
-        if buy_count >= app.config['trade']['max_buy_count']:
+        if app.config['trade']['enable'] and buy_count >= app.config['trade']['max_buy_count']:
             break
         timeStr = datetime.now().strftime('%H:%M:%S')
         if (timeStr >= '09:45:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
