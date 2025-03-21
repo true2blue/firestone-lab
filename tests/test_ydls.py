@@ -8,6 +8,19 @@ class TestApp(unittest.TestCase):
         self.ydls = Ydls(config_file='config-test.ini')
         self.data = pd.read_csv('data/processed/300534-2025-03-20.csv', dtype={'代码': str})
 
+
+    def test_is_trade_enable(self):
+        self.assertFalse(self.ydls.is_trade_enable())
+
+    def test_get_user_id(self):
+        self.assertEqual(self.ydls.get_user_id(), '5d905db9fc84d3224b0eb59c')
+
+    def test_get_max_buy_count(self):
+        self.assertEqual(self.ydls.get_max_buy_count(), 3)
+
+    def test_get_buy_volume(self):
+        self.assertEqual(self.ydls.get_buy_volume(10.13), 200)
+
     def test_job(self):
         res_df = None
         for index, row in self.data.iterrows():

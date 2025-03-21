@@ -2,15 +2,15 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
 import configparser
+from .Base import Base
 
-class Ydls(object):
+class Ydls(Base):
     
     _logger = logging.getLogger(__name__)
     _handler = TimedRotatingFileHandler('logs/firestone-lab.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
     
     def __init__(self, config_file='config.ini'):
-        self.config = configparser.ConfigParser()
-        self.config.read(f'./config/{config_file}')
+        super().__init__(config_file)
         self.orginal_df = []
         self.window = int(self.config['params']['window'])
         self.period_percent_min = float(self.config['params']['period_percent_min'])
@@ -19,12 +19,7 @@ class Ydls(object):
         self.amount_min = float(self.config['params']['amount_min'])
         self.high_low_percent_min = float(self.config['params']['high_low_percent_min'])
         self.high_low_percent_previous_max = float(self.config['params']['high_low_percent_previous_max'])
-        self.setup_logging(logging.INFO)
         
-    def setup_logging(self, loglevel):
-        logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-        logging.basicConfig(level=loglevel, format=logformat, datefmt="%Y-%m-%d %H:%M:%S", handlers=[Ydls._handler])
-
     def job(self, stock_zh_a_spot_em_df):
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['名称'].str.startswith(('ST', '*'))]
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['代码'].str.startswith(('688', '8', '4', '9', '7'))]
