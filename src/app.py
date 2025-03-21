@@ -65,8 +65,8 @@ class App(object):
     
 if __name__ == '__main__':
     app = App()
-    if app.config['trade']['enable']:
-        trade = Trade()
+    if app.config.getboolean('trade', 'enable'):
+        trade = Trade(app.config['trade']['user_id'])
     buy_count = 0
     while True:
         if app.config['trade']['enable'] and buy_count >= int(app.config['trade']['max_buy_count']):
@@ -75,7 +75,7 @@ if __name__ == '__main__':
         if (timeStr >= '09:45:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
             try:
                 if app.config['trade']['enable']:
-                    trade.load_config()
+                    trade.load_config(app.config['trade']['user_id'])
                 stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
                 res_df = app.job(stock_zh_a_spot_em_df)
                 if res_df is not None:

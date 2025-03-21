@@ -5,6 +5,7 @@ from time import time
 from datetime import datetime
 from pymongo import MongoClient
 import os
+from bson.objectid import ObjectId
 
 class Trade(object):
     
@@ -12,7 +13,7 @@ class Trade(object):
     
     _logger = logging.getLogger(__name__)
     
-    def __init__(self):
+    def __init__(self, user_id):
         self.__header = {
             'Accept': 'application/json, text/javascript, */*; q=0.01',
             'Accept-Encoding': 'gzip, deflate, br',
@@ -37,11 +38,11 @@ class Trade(object):
         self.cols = {
             'configs' : 'configs'
         }
-        self.load_config()
+        self.load_config(user_id)
     
-    def load_config(self):
+    def load_config(self, user_id):
         if self.force_refresh or self.is_expired():
-            self.config = self.db[self.cols['configs']].find_one({"userId" : self.config['trade']['user_id']})
+            self.config = self.db[self.cols['configs']].find_one({"userId": ObjectId(user_id)})
             Trade._logger.info(f'load config = {self.config}')
             self.__header['gw_reqtimestamp'] = f'{int(time()*1000)}'
             old_cookie = None
