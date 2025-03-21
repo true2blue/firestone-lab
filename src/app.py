@@ -87,7 +87,6 @@ if __name__ == '__main__':
                             res = trade.createDelegate(index, row['名称'], price, volumne, 'buy')
                             if res['state'] == 'success':
                                 buy_count += 1
-                    break
             except Exception as e:
                 App._logger.error(e)
         time.sleep(3)
