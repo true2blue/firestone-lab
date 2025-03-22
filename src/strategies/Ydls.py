@@ -1,7 +1,6 @@
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
-import configparser
 from .Base import Base
 
 class Ydls(Base):
