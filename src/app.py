@@ -44,6 +44,9 @@ class App(object):
         
     def get_success_order_count(self):
         return len(self.order['success'])
+    
+    def get_failed_order(self):   
+        return self.order['failed']
 
     def need_trade(self):
         return hasattr(self, 'trade')
@@ -78,11 +81,15 @@ class App(object):
                 if self.need_trade():
                     price = Util.calc_high_limit(row['昨收'])
                     volumne = self.base.get_buy_volume(price)
-                    res = self.trade.createDelegate(index, row['名称'], price, volumne, 'buy')
-                    if res['state'] == 'success':
-                        self.add_order('success', index)
-                        rows_success.append(index)
+                    if volumne >= 100:
+                        res = self.trade.createDelegate(index, row['名称'], price, volumne, 'buy')
+                        if res['state'] == 'success':
+                            self.add_order('success', index)
+                            rows_success.append(index)
+                        else:
+                            self.add_order('failed', index)
                     else:
+                        App._logger.error(f'volumne is too low: {volumne} for {index}')
                         self.add_order('failed', index)
                 if self.is_reach_max_buy_count():
                     return {'state': 'complete', 'message': 'reach max buy count', 'data' : self.get_complete_buy_list()}
@@ -94,21 +101,26 @@ class App(object):
 
 if __name__ == '__main__':
 
-    ydls = Ydls()
-    app = App(ydls)
-    while True:
-        timeStr = datetime.now().strftime('%H:%M:%S')
-        if timeStr > '15:00:00':
-            break
-        if (timeStr >= '09:30:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
-            try:
-                stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
-                res = app.run(stock_zh_a_spot_em_df)
-                if res['state'] != 'nodata':
-                    App._logger.info(res)
-                if res['state'] == 'complete':
-                    break
-            except Exception as e:
-                App._logger.error(e, exc_info=True)
-        time.sleep(3)
-    app.close()
+    try:
+        ydls = Ydls()
+        app = App(ydls)
+        while True:
+            timeStr = datetime.now().strftime('%H:%M:%S')
+            if timeStr > '15:00:00':
+                break
+            if (timeStr >= '09:30:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
+                try:
+                    stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
+                    res = app.run(stock_zh_a_spot_em_df)
+                    if res['state'] != 'nodata':
+                        App._logger.info(res)
+                    if res['state'] == 'complete':
+                        break
+                except Exception as e:
+                    App._logger.error(e, exc_info=True)
+            time.sleep(3)
+        app.close()
+    except Exception as e:
+        App._logger.error(e, exc_info=True)
+    finally:
+        App._logger.info(f'trade complete, match list: {app.get_match_list()}, success order: {app.get_success_order()} failed order: {app.get_failed_order()}')
