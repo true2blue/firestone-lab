@@ -20,6 +20,7 @@ class Ydls(Base):
         self.max_price = float(self.config['params']['max_price'])
         self.high_low_percent_min = float(self.config['params']['high_low_percent_min'])
         self.high_low_percent_previous_max = float(self.config['params']['high_low_percent_previous_max'])
+        self.ratio_high_low_percent = float(self.config['params']['ratio_high_low_percent'])
         self.buy_amount = float(self.config['trade']['buy_amount'])
         
     def job(self, stock_zh_a_spot_em_df):
@@ -52,6 +53,7 @@ class Ydls(Base):
                 & (stock_zh_a_spot_em_df['最高'] == stock_zh_a_spot_em_df['最新价']) 
                 & (stock_zh_a_spot_em_df['前期振幅'] <= self.high_low_percent_previous_max)  
                 & (stock_zh_a_spot_em_df['振幅'] >= self.high_low_percent_min)
+                & (stock_zh_a_spot_em_df['振幅'] >= stock_zh_a_spot_em_df['前期振幅'] * self.ratio_high_low_percent)
             ]
             # print(stock_zh_a_spot_em_df['涨跌幅(window)'])
             if not stock_zh_a_spot_em_df.empty:
