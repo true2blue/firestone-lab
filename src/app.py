@@ -104,6 +104,7 @@ if __name__ == '__main__':
     try:
         ydls = Ydls()
         app = App(ydls)
+        App._logger.info('Lab ready to start')
         while True:
             timeStr = datetime.now().strftime('%H:%M:%S')
             if timeStr > '15:00:00':
