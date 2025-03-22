@@ -18,6 +18,7 @@ class Ydls(Base):
         self.percent_max = float(self.config['params']['percent_max'])
         self.amount_min = float(self.config['params']['amount_min'])
         self.min_price = float(self.config['params']['min_price'])
+        self.max_price = float(self.config['params']['max_price'])
         self.high_low_percent_min = float(self.config['params']['high_low_percent_min'])
         self.high_low_percent_previous_max = float(self.config['params']['high_low_percent_previous_max'])
         self.buy_amount = float(self.config['trade']['buy_amount'])
@@ -26,7 +27,9 @@ class Ydls(Base):
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['名称'].str.startswith(('ST', '*'))]
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['代码'].str.startswith(('688', '8', '4', '9', '7'))]
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df.dropna(subset=['最新价'])
-        stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['最新价'] > self.min_price) & (self.buy_amount / stock_zh_a_spot_em_df['最新价'] > 100)]
+        stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['最新价'] > self.min_price)
+                                                      & (stock_zh_a_spot_em_df['最新价'] < self.max_price) 
+                                                      & (self.buy_amount / stock_zh_a_spot_em_df['最新价'] > 100)]
         # stock_zh_a_spot_em_df = stock_zh_a_spot_em_df.sort_values(by='涨速', ascending=False).head(2)
         stock_zh_a_spot_em_df['datetime'] = datetime.now().strftime('%H:%M:%S')
         stock_zh_a_spot_em_df.set_index(['代码'], inplace=True)
