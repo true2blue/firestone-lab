@@ -5,7 +5,7 @@ from src.strategies.Ydls import Ydls
 class TestApp(unittest.TestCase):
     
     def setUp(self):
-        self.ydls = Ydls(config_file='config-test.ini')
+        self.ydls = Ydls(config_file='config-test-no-trade.ini')
         self.data = pd.read_csv('data/processed/300534-2025-03-20.csv', dtype={'代码': str})
 
 
@@ -20,6 +20,11 @@ class TestApp(unittest.TestCase):
 
     def test_get_buy_volume(self):
         self.assertEqual(self.ydls.get_buy_volume(10.13), 200)
+        
+    def test_is_in_time_range(self):
+        self.assertTrue(self.ydls.is_in_time_range(timeStr='09:46:00'))
+        self.assertTrue(self.ydls.is_in_time_range(timeStr='11:30:00'))
+        self.assertFalse(self.ydls.is_in_time_range(timeStr='15:10:00'))
 
     def test_job(self):
         res_df = None

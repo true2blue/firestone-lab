@@ -1,6 +1,7 @@
 import logging
 import configparser
 from logging.handlers import TimedRotatingFileHandler
+from datetime import datetime
 from ..util import Util
 
 class Base(object):
@@ -16,6 +17,17 @@ class Base(object):
     def setup_logging(self, loglevel):
         logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
         logging.basicConfig(level=loglevel, format=logformat, datefmt="%Y-%m-%d %H:%M:%S", handlers=[Base._handler])
+        
+    def is_in_time_range(self, timeStr): 
+        for time_period in self.config['params']['time_period'].split(','):
+            time_period_array = time_period.split('-')
+            if timeStr >= time_period_array[0] and timeStr <= time_period_array[1]:
+                return True
+        return False
+    
+    def run(self, stock_zh_a_spot_em_df, timeStr = datetime.now().strftime('%H:%M:%S')):
+        if self.is_in_time_range(timeStr):
+            return self.job(stock_zh_a_spot_em_df)
 
     def job(self, stock_zh_a_spot_em_df):
         return None
