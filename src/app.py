@@ -1,4 +1,3 @@
-from .strategies.Ydls import Ydls
 from .trade import Trade
 from .util import Util
 import time
@@ -6,6 +5,7 @@ import akshare as ak
 from datetime import datetime
 import logging
 from .strategies.Base import Base
+from .strategies.Ydls import Ydls
 
 
 class App(object):
