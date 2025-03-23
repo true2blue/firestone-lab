@@ -1,1 +1,1 @@
-python src/data.py
+python src/lab/data.py

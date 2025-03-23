@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from src.strategies.Ydls import Ydls
+from src.lab.strategies.Ydls import Ydls
 
 class TestApp(unittest.TestCase):
     

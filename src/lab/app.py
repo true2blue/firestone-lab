@@ -1,3 +1,4 @@
+
 from .trade import Trade
 from .util import Util
 import time
@@ -6,6 +7,11 @@ from datetime import datetime
 import logging
 from .strategies.Base import Base
 from .strategies.Ydls import Ydls
+import sys
+import os
+
+# Add the parent directory of 'src' to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 class App(object):
@@ -100,7 +106,6 @@ class App(object):
         return {'state': 'nodata', 'message': 'no data match'}
 
 if __name__ == '__main__':
-
     try:
         ydls = Ydls()
         app = App(ydls)
