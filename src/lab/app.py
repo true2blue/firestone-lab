@@ -106,6 +106,7 @@ class App(object):
         return {'state': 'nodata', 'message': 'no data match'}
 
 if __name__ == '__main__':
+    app = None
     try:
         ydls = Ydls()
         app = App(ydls)
@@ -129,4 +130,7 @@ if __name__ == '__main__':
     except Exception as e:
         App._logger.error(e, exc_info=True)
     finally:
-        App._logger.info(f'trade complete, match list: {app.get_match_list()}, success order: {app.get_success_order()} failed order: {app.get_failed_order()}')
+        if app is not None:
+            App._logger.info(f'trade complete, match list: {app.get_match_list()}, success order: {app.get_success_order()} failed order: {app.get_failed_order()}')
+        else:
+            App._logger.error('app is not initialized')

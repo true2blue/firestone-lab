@@ -1,16 +1,18 @@
 # -*- mode: python ; coding: utf-8 -*-
-from PyInstaller.utils.hooks import collect_data_files
-
-# Add this to your .spec file
-py_mini_racer_data = collect_data_files('py_mini_racer', include_py_files=True, subdir='_dll')
 
 
 a = Analysis(
     ['run_app.py'],
     pathex=['.'],
-    binaries=[(r'C:\aqua\firestone-lab\venv\Lib\site-packages\py_mini_racer\mini_racer.dll', '_dll')],
-    datas=[('src', 'src'), *py_mini_racer_data],
-    hiddenimports=['requests', 'pymongo', 'akshare'],
+    binaries=[],
+    datas=[
+        ('./venv/Lib/site-packages/py_mini_racer/mini_racer.dll', '.'),
+        ('./venv/Lib/site-packages/py_mini_racer/icudtl.dat', '.'), 
+        ('./venv/Lib/site-packages/py_mini_racer/snapshot_blob.bin', '.'),
+        ('./venv/Lib/site-packages/akshare/file_fold/calendar.json', './akshare/file_fold/'),
+        ('src', 'src')
+    ],
+    hiddenimports=['requests', 'pymongo', 'akshare', 'logging', 'logging.handlers'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -23,20 +25,26 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
     [],
+    exclude_binaries=True,
     name='run_app',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
     console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+)
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='run_app',
 )
