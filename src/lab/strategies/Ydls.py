@@ -45,7 +45,7 @@ class Ydls(Base):
             stock_zh_a_spot_em_df['成交额(window)'] = (self.orginal_df[-1]['成交额'] - self.orginal_df[-self.window]['成交额'])
             stock_zh_a_spot_em_df['前期振幅'] = self.orginal_df[-self.window]['振幅']
             # print(stock_zh_a_spot_em_df[['时间', '涨跌幅(window)']])
-            stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[
+            match_df = stock_zh_a_spot_em_df[
                 (stock_zh_a_spot_em_df['涨跌幅(window)'] >= self.period_percent_min) 
                 & (stock_zh_a_spot_em_df['涨跌幅'] <= self.percent_max) 
                 & (stock_zh_a_spot_em_df['涨跌幅'] >= self.percent_min)
@@ -56,6 +56,6 @@ class Ydls(Base):
                 & (stock_zh_a_spot_em_df['振幅'] >= stock_zh_a_spot_em_df['前期振幅'] * self.ratio_high_low_percent)
             ]
             # print(stock_zh_a_spot_em_df['涨跌幅(window)'])
-            if not stock_zh_a_spot_em_df.empty:
-                return stock_zh_a_spot_em_df
-        return None
+            if not match_df.empty:
+                return match_df, True
+        return stock_zh_a_spot_em_df, False

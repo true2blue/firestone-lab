@@ -74,8 +74,8 @@ class App(object):
             return {'state': 'complete', 'message': 'reach max buy count', 'data' : self.get_complete_buy_list()}
         if self.need_trade():
             self.trade.load_config(self.base.get_user_id())
-        res_df = self.base.run(stock_zh_a_spot_em_df, timeStr=timeStr)
-        if res_df is not None:
+        res_df, status = self.base.run(stock_zh_a_spot_em_df, timeStr=timeStr)
+        if status:
             App._logger.info(res_df)
             rows = []
             rows_success = []

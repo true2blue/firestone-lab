@@ -6,7 +6,7 @@ class TestApp(unittest.TestCase):
     
     def setUp(self):
         self.ydls = Ydls(config_file='config-test-no-trade.ini')
-        self.data = pd.read_csv('data/processed/300534-2025-03-20.csv', dtype={'代码': str})
+        self.data = pd.read_csv('data/processed/603690-2025-03-27.csv', dtype={'代码': str})
 
 
     def test_is_trade_enable(self):
@@ -25,13 +25,18 @@ class TestApp(unittest.TestCase):
         self.assertTrue(self.ydls.is_in_time_range(timeStr='09:46:00'))
         self.assertTrue(self.ydls.is_in_time_range(timeStr='11:30:00'))
         self.assertFalse(self.ydls.is_in_time_range(timeStr='15:10:00'))
+        
+    def is_match_time(self, row, time):
+        return row['时间'] == time
 
     def test_job(self):
         res_df = None
         for index, row in self.data.iterrows():
             row_df = pd.DataFrame([row])
-            res_df = self.ydls.job(row_df)
-            if res_df is not None:
+            res_df, status = self.ydls.job(row_df)
+            if self.is_match_time(row, '13:00:30'):
+                print(res_df)
+            if status:
                 print(res_df)                
                 break
         self.assertIsNotNone(res_df)
