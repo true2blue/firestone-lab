@@ -31,7 +31,7 @@ class Base(object):
         return None, False
 
     def job(self, stock_zh_a_spot_em_df):
-        return None, False
+        return stock_zh_a_spot_em_df, False
     
     def is_trade_enable(self):
         return self.config.getboolean('trade', 'enable')
