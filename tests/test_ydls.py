@@ -6,7 +6,7 @@ class TestApp(unittest.TestCase):
     
     def setUp(self):
         self.ydls = Ydls(config_file='config-test-no-trade.ini')
-        self.data = pd.read_csv('data/processed/603690-2025-03-27.csv', dtype={'代码': str})
+        self.data = pd.read_csv('data/processed/600239-2025-03-28.csv', dtype={'代码': str})
 
 
     def test_is_trade_enable(self):
@@ -31,15 +31,23 @@ class TestApp(unittest.TestCase):
 
     def test_job(self):
         res_df = None
+        status = False
+        expected_time = None
+        actual_time = None
         for index, row in self.data.iterrows():
             row_df = pd.DataFrame([row])
             res_df, status = self.ydls.job(row_df)
-            if self.is_match_time(row, '13:00:30'):
+            if self.is_match_time(row, '14:31:18'):
+                print('Expected')
                 print(res_df)
+                expected_time = res_df.iloc[0]['时间']
             if status:
-                print(res_df)                
+                print('Actual')
+                print(res_df)
+                actual_time = res_df.iloc[0]['时间']
                 break
-        self.assertIsNotNone(res_df)
+        self.assertEqual(expected_time, actual_time)           
+        self.assertTrue(status)
 
 if __name__ == '__main__':
     unittest.main()
