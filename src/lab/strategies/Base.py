@@ -28,6 +28,7 @@ class Base(object):
     def run(self, stock_zh_a_spot_em_df, timeStr = datetime.now().strftime('%H:%M:%S')):
         if self.is_in_time_range(timeStr):
             return self.job(stock_zh_a_spot_em_df)
+        return None, False
 
     def job(self, stock_zh_a_spot_em_df):
         return None, False
