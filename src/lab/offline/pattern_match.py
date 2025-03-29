@@ -12,7 +12,16 @@ else:
     stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['最新价'] > 5)
                                                     & (stock_zh_a_spot_em_df['最新价'] < 30) 
                                                     & (3000 / stock_zh_a_spot_em_df['最新价'] > 100)]
-    res = talib.CDLDOJISTAR(stock_zh_a_spot_em_df['今开'].values, stock_zh_a_spot_em_df['最高'].values, stock_zh_a_spot_em_df['最低'].values, stock_zh_a_spot_em_df['最新价'].values)
-    indices = [i for i, value in enumerate(res) if value == 100]
-    filtered_df = stock_zh_a_spot_em_df.iloc[indices]
-    print(filtered_df)
+    codes = []
+    for index, row in stock_zh_a_spot_em_df.iterrows():
+        symbol = row['代码']
+        data_df = ak.stock_zh_a_hist(symbol=symbol, period="daily", start_date="20250326", end_date='20250328', adjust="qfq")
+        
+        res = talib.CDLMORNINGDOJISTAR(data_df['开盘'].values, 
+                                data_df['最高'].values, 
+                                data_df['最低'].values, 
+                                data_df['收盘'].values)
+        
+        if res[-1] == 100:
+            codes.append(symbol)
+    print(codes)
