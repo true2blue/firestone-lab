@@ -7,7 +7,9 @@ altgraph==0.17.4
 annotated-types==0.7.0
 anyio==4.9.0
 attrs==25.3.0
+backtesting==0.6.4
 beautifulsoup4==4.13.3
+bokeh==3.7.2
 certifi==2025.1.31
 charset-normalizer==3.4.1
 click==8.1.8
@@ -34,6 +36,7 @@ matplotlib==3.10.1
 mdurl==0.1.2
 mini-racer==0.12.4
 multidict==6.2.0
+narwhals==1.32.0
 numpy==2.2.4
 openpyxl==3.1.5
 packaging==24.2
@@ -54,6 +57,7 @@ python-dateutil==2.9.0.post0
 python-multipart==0.0.20
 pytz==2025.1
 pywin32-ctypes==0.2.3
+PyYAML==6.0.2
 requests==2.32.3
 rich==13.9.4
 setuptools==77.0.3
@@ -64,6 +68,7 @@ soupsieve==2.6
 starlette==0.46.1
 ta-lib==0.6.3
 tabulate==0.9.0
+tornado==6.4.2
 tqdm==4.67.1
 typer==0.15.2
 typing_extensions==4.12.2
@@ -72,4 +77,5 @@ urllib3==2.3.0
 uvicorn==0.34.0
 webencodings==0.5.1
 xlrd==2.0.1
+xyzservices==2025.1.0
 yarl==1.18.3

@@ -1,0 +1,1 @@
+python src/lab/backtesting/SmaCross.py
