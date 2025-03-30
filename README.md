@@ -16,3 +16,9 @@ A tool for test
     source ./activate
 ### install dependencies
 4.  pip install -r requirements.txt
+
+## **Libraries**
+
+1. AKshare + AKtools (data)
+2. ta-lib (indicator)
+3. Backtesting.py (backtesting)
