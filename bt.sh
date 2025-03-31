@@ -1,1 +1,1 @@
-python src/lab/backtesting/SmaCross.py
+python src/lab/backtesting/SmaCross_000001.py
