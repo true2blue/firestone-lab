@@ -22,6 +22,8 @@ else:
             data_df['最高'].values, 
             data_df['最低'].values, 
             data_df['收盘'].values)
+        
+        data_df["RSI"] = talib.RSI(data_df["收盘"], timeperiod=14)
 
         if data_df.iloc[-1]['CDLMORNINGDOJISTAR'] == 100:
             data_all_df = pd.concat([data_all_df, data_df.iloc[[-1]]], ignore_index=True)
