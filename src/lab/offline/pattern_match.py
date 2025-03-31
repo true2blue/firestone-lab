@@ -16,15 +16,14 @@ else:
     data_all_df = pd.DataFrame()
     for index, row in stock_zh_a_spot_em_df.iterrows():
         symbol = row['代码']
-        data_df = ak.stock_zh_a_hist(symbol=symbol, period="daily", start_date="20150301", end_date='20250328', adjust="qfq")
+        data_df = ak.stock_zh_a_hist(symbol=symbol, period="daily", start_date="20250101", end_date='20250328', adjust="qfq")
 
-        data_df['CDLMORNINGDOJISTAR'] = talib.CDLMORNINGDOJISTAR(data_df['开盘'].values, 
+        data_df['CDLMORNINGDOJISTAR'] = talib.CDLMORNINGSTAR(data_df['开盘'].values, 
             data_df['最高'].values, 
             data_df['最低'].values, 
             data_df['收盘'].values)
 
-        temp_df = data_df[data_df['CDLMORNINGDOJISTAR'] == 100]
-        if not temp_df.empty:
-            data_all_df = pd.concat([data_all_df, temp_df], ignore_index=True)
+        if data_df.iloc[-1]['CDLMORNINGDOJISTAR'] == 100:
+            data_all_df = pd.concat([data_all_df, data_df.iloc[[-1]]], ignore_index=True)
     data_all_df.to_csv('./output/data_all_df.csv', index=False)
     # print(codes)
