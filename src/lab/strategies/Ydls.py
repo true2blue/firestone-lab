@@ -6,7 +6,6 @@ from .Base import Base
 class Ydls(Base):
     
     _logger = logging.getLogger(__name__)
-    _handler = TimedRotatingFileHandler('logs/firestone-lab.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
     
     def __init__(self, config_file='config.ini'):
         super().__init__(config_file)
