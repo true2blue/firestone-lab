@@ -23,6 +23,8 @@ class Ydls(Base):
         self.buy_amount = float(self.config['trade']['buy_amount'])
         
     def job(self, stock_zh_a_spot_em_df):
+        if self.target_codes is not None:
+            stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[stock_zh_a_spot_em_df['代码'].isin(self.target_codes['代码'])]
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['名称'].str.startswith(('ST', '*'))]
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['代码'].str.startswith(('688', '8', '4', '9', '7'))]
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df.dropna(subset=['最新价'])

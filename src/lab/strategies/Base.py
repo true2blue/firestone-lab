@@ -3,6 +3,8 @@ import configparser
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
 from ..util import Util
+import pandas as pd
+import os
 
 class Base(object):
 
@@ -11,8 +13,14 @@ class Base(object):
 
     def __init__(self, config_file='config.ini'):
         self.config = configparser.ConfigParser()
-        self.config.read(f'./config/{config_file}')
+        self.config.read(f'./config/{config_file}', encoding='utf-8')
         self.setup_logging(logging.INFO)
+        self.target_codes = self.read_target_codes()
+
+    def read_target_codes(self):
+        if os.path.exists('./output/target_codes.csv'):
+            return pd.read_csv('./output/target_codes.csv')
+        return None
 
     def setup_logging(self, loglevel):
         logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
