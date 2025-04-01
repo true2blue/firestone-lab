@@ -3,9 +3,11 @@ import talib
 from talib import abstract
 import pandas as pd
 import os
+from datetime import datetime
 
 enable_concept = False
 stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
+start_date = "20250101"
 
 def read_target_codes():
     if os.path.exists('./output/codes.csv'):
@@ -30,7 +32,8 @@ else:
     }
     for index, row in stock_zh_a_spot_em_df.iterrows():
         symbol = row['代码']
-        data_df = ak.stock_zh_a_hist(symbol=symbol, period="daily", start_date="20250101", end_date='20250331', adjust="qfq")
+        current_date = datetime.now().strftime('%Y%m%d')
+        data_df = ak.stock_zh_a_hist(symbol=symbol, period="daily", start_date=start_date, end_date=current_date, adjust="qfq")
         data_df["RSI"] = talib.RSI(data_df["收盘"], timeperiod=14)
         data_df["volume_roc"] = talib.ROC(data_df['成交量'], timeperiod=1)
 
