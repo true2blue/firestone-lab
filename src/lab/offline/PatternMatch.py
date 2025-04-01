@@ -2,12 +2,22 @@ import akshare as ak
 import talib
 from talib import abstract
 import pandas as pd
+import os
 
+enable_concept = False
 stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
+
+def read_target_codes():
+    if os.path.exists('./output/codes.csv'):
+        return pd.read_csv('./output/codes.csv')
+    return None
 
 if stock_zh_a_spot_em_df.empty:
     print("No data available for the given date range.")
 else:
+    target_codes = read_target_codes()
+    if enable_concept and target_codes is not None:
+        stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[stock_zh_a_spot_em_df['代码'].isin(target_codes['代码'])]
     stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['名称'].str.startswith(('ST', '*'))]
     stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['代码'].str.startswith(('688', '8', '4', '9', '7'))]
     stock_zh_a_spot_em_df = stock_zh_a_spot_em_df.dropna(subset=['最新价'])
@@ -34,5 +44,4 @@ else:
                 pattern_list[pattern] = pd.concat([pattern_list[pattern], data_df.iloc[[-1]]], ignore_index=True)
     
     data_all_df = pd.concat(pattern_list.values(), ignore_index=True)
-    data_all_df.to_csv('./output/data_all_df.csv', index=False)
-    # print(codes)
+    data_all_df.to_csv('./output/pm.csv', index=False)

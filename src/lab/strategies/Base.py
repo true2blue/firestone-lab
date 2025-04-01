@@ -18,8 +18,8 @@ class Base(object):
         self.target_codes = self.read_target_codes()
 
     def read_target_codes(self):
-        if os.path.exists('./output/target_codes.csv'):
-            return pd.read_csv('./output/target_codes.csv')
+        if self.is_codes_filter_enable() and os.path.exists('./output/codes.csv'):
+            return pd.read_csv('./output/codes.csv')
         return None
 
     def setup_logging(self, loglevel):
@@ -43,6 +43,9 @@ class Base(object):
     
     def is_trade_enable(self):
         return self.config.getboolean('trade', 'enable')
+    
+    def is_codes_filter_enable(self):
+        return self.config.getboolean('params', 'codes_filter')
     
     def get_user_id(self):
         return self.config['trade']['user_id']

@@ -12,9 +12,7 @@ class CodeFilter(object):
         self.config.read(f'./config/{config_file}', encoding='utf-8')
     
     
-    def filter(self):
-        conceptStr = self.config['params']['concepts']
-        concepts = conceptStr.split(',')
+    def filter(self, concepts):
         result_df = pd.DataFrame()
         for symbol in concepts:
             stock_board_concept_cons_em_df = ak.stock_board_concept_cons_em(symbol=symbol)
@@ -23,8 +21,8 @@ class CodeFilter(object):
         result_df.drop_duplicates(subset=['代码'], inplace=True)
         result_df = result_df[~result_df['名称'].str.startswith(('ST', '*'))]
         result_df = result_df[~result_df['代码'].str.startswith(('688', '8', '4', '9', '7'))]
-        result_df.to_csv('./output/target_codes.csv', index=False)
+        result_df.to_csv('./output/codes.csv', index=False)
 
 
 if __name__ == '__main__':
-    CodeFilter().filter()
+    CodeFilter().filter(['可控核聚变', '创新药'])
