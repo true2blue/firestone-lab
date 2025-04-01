@@ -5,13 +5,13 @@ import pandas as pd
 import os
 from datetime import datetime
 
-enable_concept = False
+enable_concept = True
 stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
 start_date = "20250101"
 
 def read_target_codes():
     if os.path.exists('./output/codes.csv'):
-        return pd.read_csv('./output/codes.csv')
+        return pd.read_csv('./output/codes.csv', dtype={'代码': str})
     return None
 
 if stock_zh_a_spot_em_df.empty:

@@ -19,7 +19,7 @@ class Base(object):
 
     def read_target_codes(self):
         if self.is_codes_filter_enable() and os.path.exists('./output/codes.csv'):
-            return pd.read_csv('./output/codes.csv')
+            return pd.read_csv('./output/codes.csv', dtype={'代码': str})
         return None
 
     def setup_logging(self, loglevel):

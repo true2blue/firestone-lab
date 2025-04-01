@@ -25,4 +25,4 @@ class CodeFilter(object):
 
 
 if __name__ == '__main__':
-    CodeFilter().filter(['可控核聚变', '创新药'])
+    CodeFilter().filter(['低空经济', '军工','海工装备', '雄安新区'])
