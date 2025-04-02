@@ -1,1 +1,0 @@
-python src/lab/offline/pattern_match.py
