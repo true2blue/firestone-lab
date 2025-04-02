@@ -135,7 +135,7 @@ class App(object):
 if __name__ == '__main__':
     app = None
     try:
-        app = App([Ydls(), YdlsConcept()])
+        app = App([Ydls()])
         App._logger.info('Lab ready to start')
         while True:
             timeStr = datetime.now().strftime('%H:%M:%S')

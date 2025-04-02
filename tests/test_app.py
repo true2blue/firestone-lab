@@ -83,7 +83,7 @@ class TestApp(unittest.TestCase):
                 res_list.append(res)
         self.assertEqual(len(res_list), 1)
         self.assertEqual(len(self.app.get_success_order()), 1)
-        self.assertEqual(self.app.get_success_order()[0], '300534')
+        self.assertEqual(self.app.get_success_order()[0], '600239')
         self.assertEqual(res_list[0]['state'], 'success')
         self.assertEqual(res_list[0]['message'], 'trade success')
         self.assertEqual(res_list[0]['data'][0], '600239')

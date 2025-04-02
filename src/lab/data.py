@@ -1,10 +1,10 @@
 import pandas as pd
 
 # Load the data from the CSV file
-file_path = 'data/raw/600239-2025-03-28.csv'
-code = '600239'
-name = '云南城投'
-pre_close = 2.48
+file_path = 'data/raw/002084-2025-04-02.csv'
+code = '002084'
+name = '海鸥住工'
+pre_close = 2.85
 data = pd.read_csv(file_path)
 
 # Ensure numeric columns are properly converted
@@ -34,5 +34,5 @@ data['涨跌幅'] = ((data['最新价'] - pre_close) / pre_close * 100).round(2)
 data['振幅'] = ((data['最高'] - data['最低']) / pre_close * 100).round(2)
 # Optionally, you can use latest_price_at_0925 for further processing if needed
 # Save the modified data to a new CSV file
-output_file_path = 'data/processed/600239-2025-03-28.csv'
+output_file_path = 'data/processed/002084-2025-04-02.csv'
 data.to_csv(output_file_path, index=False)
