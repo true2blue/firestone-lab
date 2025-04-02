@@ -38,6 +38,9 @@ class App(object):
     def is_trade_enable(self):
         return self.config.getboolean('trade', 'enable')
     
+    def is_use_proxy(self):
+        return self.config.getboolean('trade', 'use_proxy')
+    
     def get_user_id(self):
         return self.config['trade']['user_id']
     
@@ -134,12 +137,13 @@ class App(object):
         return result
 
 if __name__ == '__main__':
+    interval = 6
     app = None
     try:
         app = App([Ydls()])
         pm = ProxyManager()
-        proxy = pm.get_tunnel()
-        App._logger.info('Lab ready to start')
+        proxy = pm.get_tunnel() if app.is_use_proxy() else None
+        App._logger.info(f'Lab ready to start, use proxy = {proxy}')
         while True:
             timeStr = datetime.now().strftime('%H:%M:%S')
             if timeStr > '15:00:00':
@@ -154,7 +158,7 @@ if __name__ == '__main__':
                         break
                 except Exception as e:
                     App._logger.error(e, exc_info=True)
-            time.sleep(3)
+            time.sleep(interval)
         app.close()
     except Exception as e:
         App._logger.error(e, exc_info=True)
