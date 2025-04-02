@@ -6,20 +6,24 @@ class Ydls(Base):
     
     _logger = logging.getLogger(__name__)
     
-    def __init__(self, config_file='config.ini'):
-        super().__init__(config_file)
+    def __init__(self, config=None):
+        super().__init__(config)
         self.orginal_df = []
-        self.window = int(self.config['params']['window'])
-        self.period_percent_min = float(self.config['params']['period_percent_min'])
-        self.percent_min = float(self.config['params']['percent_min'])
-        self.percent_max = float(self.config['params']['percent_max'])
-        self.amount_min = float(self.config['params']['amount_min'])
-        self.min_price = float(self.config['params']['min_price'])
-        self.max_price = float(self.config['params']['max_price'])
-        self.high_low_percent_min = float(self.config['params']['high_low_percent_min'])
-        self.high_low_percent_previous_max = float(self.config['params']['high_low_percent_previous_max'])
-        self.ratio_high_low_percent = float(self.config['params']['ratio_high_low_percent'])
-        self.buy_amount = float(self.config['trade']['buy_amount'])
+
+    def set_config(self, config):
+        super().set_config(config)
+        if self.config is not None:
+            self.window = int(self.config['params']['window'])
+            self.period_percent_min = float(self.config['params']['period_percent_min'])
+            self.percent_min = float(self.config['params']['percent_min'])
+            self.percent_max = float(self.config['params']['percent_max'])
+            self.amount_min = float(self.config['params']['amount_min'])
+            self.min_price = float(self.config['params']['min_price'])
+            self.max_price = float(self.config['params']['max_price'])
+            self.high_low_percent_min = float(self.config['params']['high_low_percent_min'])
+            self.high_low_percent_previous_max = float(self.config['params']['high_low_percent_previous_max'])
+            self.ratio_high_low_percent = float(self.config['params']['ratio_high_low_percent'])
+            self.buy_amount = float(self.config['trade']['buy_amount'])
         
     def job(self, stock_zh_a_spot_em_df):
         stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[~stock_zh_a_spot_em_df['名称'].str.startswith(('ST', '*'))]

@@ -1,18 +1,18 @@
 import logging
-import configparser
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
-from ..util import Util
 
 class Base(object):
 
     _logger = logging.getLogger(__name__)
-    _handler = TimedRotatingFileHandler('logs/firestone-lab.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
+    _handler = TimedRotatingFileHandler(f'logs/firestone-lab-{__name__}.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
 
-    def __init__(self, config_file='config.ini'):
-        self.config = configparser.ConfigParser()
-        self.config.read(f'./config/{config_file}', encoding='utf-8')
+    def __init__(self, config=None):
         self.setup_logging(logging.INFO)
+        self.set_config(config)
+
+    def set_config(self, config):
+        self.config = config
 
     def setup_logging(self, loglevel):
         logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
@@ -26,6 +26,8 @@ class Base(object):
         return False
     
     def run(self, stock_zh_a_spot_em_df, timeStr = datetime.now().strftime('%H:%M:%S')):
+        if self.config is None:
+            raise ValueError("Configuration is not set. Please provide a valid configuration.")
         if self.is_in_time_range(timeStr):
             return self.job(stock_zh_a_spot_em_df)
         return None, False
@@ -33,17 +35,5 @@ class Base(object):
     def job(self, stock_zh_a_spot_em_df):
         return stock_zh_a_spot_em_df, False
     
-    def is_trade_enable(self):
-        return self.config.getboolean('trade', 'enable')
     
-    def get_user_id(self):
-        return self.config['trade']['user_id']
     
-    def get_max_buy_count(self):
-        return int(self.config['trade']['max_buy_count'])
-    
-    def get_buy_volume(self, price):
-        if 'buy_volumne' in self.config['trade']:
-            return int(self.config['trade']['buy_volumne'])
-        else:
-            return Util.calc_buy_voulme(price, float(self.config['trade']['buy_amount']))
