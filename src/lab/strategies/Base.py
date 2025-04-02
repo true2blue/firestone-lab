@@ -3,8 +3,6 @@ import configparser
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
 from ..util import Util
-import pandas as pd
-import os
 
 class Base(object):
 
@@ -15,12 +13,6 @@ class Base(object):
         self.config = configparser.ConfigParser()
         self.config.read(f'./config/{config_file}', encoding='utf-8')
         self.setup_logging(logging.INFO)
-        self.target_codes = self.read_target_codes()
-
-    def read_target_codes(self):
-        if self.is_codes_filter_enable() and os.path.exists('./output/codes.csv'):
-            return pd.read_csv('./output/codes.csv', dtype={'代码': str})
-        return None
 
     def setup_logging(self, loglevel):
         logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
@@ -43,9 +35,6 @@ class Base(object):
     
     def is_trade_enable(self):
         return self.config.getboolean('trade', 'enable')
-    
-    def is_codes_filter_enable(self):
-        return self.config.getboolean('params', 'codes_filter')
     
     def get_user_id(self):
         return self.config['trade']['user_id']

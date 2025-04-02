@@ -1,11 +1,13 @@
 import unittest
 import pandas as pd
 from src.lab.strategies.Ydls import Ydls
+from src.lab.strategies.YdlsConcept import YdlsConcept
 
 class TestApp(unittest.TestCase):
     
     def setUp(self):
         self.ydls = Ydls(config_file='config-test-no-trade.ini')
+        self.ydlsConcept = YdlsConcept(config_file='config-test-no-trade.ini')
         self.data = pd.read_csv('data/processed/600239-2025-03-28.csv', dtype={'代码': str})
 
 
@@ -29,20 +31,34 @@ class TestApp(unittest.TestCase):
     def is_match_time(self, row, time):
         return row['时间'] == time
     
-    # def test_column_value_exists(self):
-    #     df1 = pd.DataFrame({'A': [7]})
-    #     df2 = pd.DataFrame({'B': [3, 4, 5, 6]})
-    #     exists = df1[df1['A'].isin(df2['B'])]
-    #     print(exists)
+    # def test_job(self):
+    #     res_df = None
+    #     status = False
+    #     expected_time = None
+    #     actual_time = None
+    #     for index, row in self.data.iterrows():
+    #         row_df = pd.DataFrame([row])
+    #         res_df, status = self.ydls.job(row_df)
+    #         if self.is_match_time(row, '14:31:18'):
+    #             print('Expected')
+    #             print(res_df)
+    #             expected_time = res_df.iloc[0]['时间']
+    #         if status:
+    #             print('Actual')
+    #             print(res_df)
+    #             actual_time = res_df.iloc[0]['时间']
+    #             break
+    #     self.assertEqual(expected_time, actual_time)           
+    #     self.assertTrue(status)
 
-    def test_job(self):
+    def test_job_concept(self):
         res_df = None
         status = False
         expected_time = None
         actual_time = None
         for index, row in self.data.iterrows():
             row_df = pd.DataFrame([row])
-            res_df, status = self.ydls.job(row_df)
+            res_df, status = self.ydlsConcept.job(row_df)
             if self.is_match_time(row, '14:31:18'):
                 print('Expected')
                 print(res_df)
