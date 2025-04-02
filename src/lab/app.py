@@ -11,6 +11,7 @@ from .strategies.YdlsConcept import YdlsConcept
 import sys
 import os
 import configparser
+from .ProxyManager import ProxyManager
 
 # Add the parent directory of 'src' to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -136,6 +137,8 @@ if __name__ == '__main__':
     app = None
     try:
         app = App([Ydls()])
+        pm = ProxyManager()
+        proxy = pm.get_tunnel()
         App._logger.info('Lab ready to start')
         while True:
             timeStr = datetime.now().strftime('%H:%M:%S')
@@ -143,7 +146,7 @@ if __name__ == '__main__':
                 break
             if (timeStr >= '09:30:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
                 try:
-                    stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em()
+                    stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em(proxy=proxy)
                     res = app.run(stock_zh_a_spot_em_df)
                     if res['state'] != 'nodata':
                         App._logger.info(res)
