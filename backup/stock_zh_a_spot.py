@@ -9,10 +9,8 @@ https://quote.eastmoney.com/
 
 import asyncio
 from typing import Dict, List
-
 import aiohttp
 import pandas as pd
-
 
 async def fetch_single_page(
     session: aiohttp.ClientSession, url: str, params: Dict
@@ -204,7 +202,7 @@ async def stock_zh_a_spot_em_async(proxy=None) -> pd.DataFrame:
     :return: 实时行情
     :rtype: pandas.DataFrame
     """
-    url = "https://82.push2.eastmoney.com/api/qt/clist/get"
+    url = f"https://{random.randrange(100)}.push2.eastmoney.com/api/qt/clist/get"
     params = {
         "pn": "1",
         "pz": "100",
