@@ -137,7 +137,7 @@ class App(object):
         return result
 
 if __name__ == '__main__':
-    interval = 6
+    interval = 3
     app = None
     try:
         app = App([Ydls()])
