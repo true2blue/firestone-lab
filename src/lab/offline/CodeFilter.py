@@ -25,4 +25,4 @@ class CodeFilter(object):
 
 
 if __name__ == '__main__':
-    CodeFilter().filter(['低空经济', '军工','海工装备', '雄安新区'])
+    CodeFilter().filter(['鸡肉概念', '猪肉概念','粮食概念', '供销社概念', '水产养殖', '转基因', '人造肉', '生态农业', '农业种植', '土地流转', '草甘膦'])

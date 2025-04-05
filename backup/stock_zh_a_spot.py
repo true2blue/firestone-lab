@@ -11,6 +11,7 @@ import asyncio
 from typing import Dict, List
 import aiohttp
 import pandas as pd
+import random
 
 async def fetch_single_page(
     session: aiohttp.ClientSession, url: str, params: Dict
