@@ -15,9 +15,9 @@ class CodeFilter(object):
     def filter(self, concepts):
         result_df = pd.DataFrame()
         for symbol in concepts:
-            stock_board_concept_cons_em_df = ak.stock_board_concept_cons_em(symbol=symbol)
-            stock_board_concept_cons_em_df['concept'] = symbol
-            result_df = pd.concat([result_df, stock_board_concept_cons_em_df], ignore_index=True)
+            stock_board_industry_cons_em_df = ak.stock_board_industry_cons_em(symbol=symbol)
+            stock_board_industry_cons_em_df['concept'] = symbol
+            result_df = pd.concat([result_df, stock_board_industry_cons_em_df], ignore_index=True)
         result_df.drop_duplicates(subset=['代码'], inplace=True)
         result_df = result_df[~result_df['名称'].str.startswith(('ST', '*'))]
         result_df = result_df[~result_df['代码'].str.startswith(('688', '8', '4', '9', '7'))]
@@ -25,4 +25,4 @@ class CodeFilter(object):
 
 
 if __name__ == '__main__':
-    CodeFilter().filter(['影视概念'])
+    CodeFilter().filter(['旅游酒店'])
