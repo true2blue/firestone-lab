@@ -21,7 +21,7 @@ class CodeFilter(object):
         result_df.drop_duplicates(subset=['代码'], inplace=True)
         result_df = result_df[~result_df['名称'].str.startswith(('ST', '*'))]
         result_df = result_df[~result_df['代码'].str.startswith(('688', '8', '4', '9', '7'))]
-        result_df.to_csv('./output/codes.csv', index=False)
+        result_df.to_csv('./output/codes_ind.csv', index=False)
 
 
 if __name__ == '__main__':

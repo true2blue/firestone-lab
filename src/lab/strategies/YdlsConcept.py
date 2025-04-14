@@ -16,6 +16,8 @@ class YdlsConcept(Ydls):
         if self.config is not None:
             self.window = int(self.config['params_concept']['window'])
             self.period_percent_min = float(self.config['params_concept']['period_percent_min'])
+            self.open_percent_min = float(self.config['params_concept']['open_percent_min'])
+            self.open_percent_max = float(self.config['params_concept']['open_percent_max'])
             self.percent_min = float(self.config['params_concept']['percent_min'])
             self.percent_max = float(self.config['params_concept']['percent_max'])
             self.amount_min = float(self.config['params_concept']['amount_min'])
@@ -32,6 +34,11 @@ class YdlsConcept(Ydls):
     def job(self, stock_zh_a_spot_em_df):
         pre_df, status = super().job(stock_zh_a_spot_em_df)
         if status and self.target_codes is not None:
+            stock_zh_a_spot_em_df['开盘涨幅'] = (stock_zh_a_spot_em_df['今开'] - stock_zh_a_spot_em_df['昨收']) / stock_zh_a_spot_em_df['昨收'] * 100
+            stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[
+                (stock_zh_a_spot_em_df['开盘涨幅'] >= self.open_percent_min) 
+                & (stock_zh_a_spot_em_df['开盘涨幅'] <= self.open_percent_max)
+            ]
             match_df = stock_zh_a_spot_em_df[stock_zh_a_spot_em_df['代码'].isin(self.target_codes['代码'])]
             if not match_df.empty:
                 return match_df, True
