@@ -141,8 +141,10 @@ if __name__ == '__main__':
     app = None
     try:
         app = App([Ydls()])
-        pm = ProxyManager()
-        proxy = pm.get_tunnel() if app.is_use_proxy() else None
+        proxy = None
+        if app.is_use_proxy():
+            pm = ProxyManager()
+            proxy = pm.get_tunnel()
         App._logger.info(f'Lab ready to start, use proxy = {proxy}')
         while True:
             timeStr = datetime.now().strftime('%H:%M:%S')
