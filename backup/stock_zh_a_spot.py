@@ -233,6 +233,6 @@ def stock_zh_a_spot_em(proxy=None) -> pd.DataFrame:
     return asyncio.run(stock_zh_a_spot_em_async(proxy=proxy))
 
 
-if __name__ == "__main__":
-    stock_zh_a_spot_em_df = stock_zh_a_spot_em()
-    print(stock_zh_a_spot_em_df)
+# if __name__ == "__main__":
+#     stock_zh_a_spot_em_df = stock_zh_a_spot_em()
+#     print(stock_zh_a_spot_em_df)
