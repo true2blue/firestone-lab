@@ -137,10 +137,10 @@ class App(object):
         return result
 
 if __name__ == '__main__':
-    interval = 20
+    interval = 6
     app = None
     try:
-        app = App([YdlsConcept()])
+        app = App([Ydls()])
         proxy = None
         if app.is_use_proxy():
             pm = ProxyManager()
