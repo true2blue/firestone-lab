@@ -137,10 +137,10 @@ class App(object):
         return result
 
 if __name__ == '__main__':
-    interval = 3
+    interval = 6
     app = None
     try:
-        app = App([Ydls()])
+        app = App([YdlsConcept()])
         proxy = None
         if app.is_use_proxy():
             pm = ProxyManager()
@@ -153,6 +153,10 @@ if __name__ == '__main__':
             if (timeStr >= '09:30:00' and timeStr <= '11:30:00') or (timeStr >= '13:00:00' and timeStr <= '15:00:00'):
                 try:
                     stock_zh_a_spot_em_df = ak.stock_zh_a_spot_em(proxy=proxy)
+                    if len(stock_zh_a_spot_em_df) == 0:
+                        App._logger.error('no data')
+                        time.sleep(interval)
+                        continue
                     res = app.run(stock_zh_a_spot_em_df)
                     if res['state'] != 'nodata':
                         App._logger.info(res)

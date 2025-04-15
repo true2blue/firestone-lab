@@ -25,4 +25,4 @@ class CodeFilter(object):
 
 
 if __name__ == '__main__':
-    CodeFilter().filter(['苹果概念','可控核聚变'])
+    CodeFilter().filter(['AI语料'])

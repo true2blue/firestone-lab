@@ -25,4 +25,4 @@ class CodeFilter(object):
 
 
 if __name__ == '__main__':
-    CodeFilter().filter(['旅游酒店'])
+    CodeFilter().filter(['电池', '文化传媒', '电力行业'])
