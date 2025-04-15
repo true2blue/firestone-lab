@@ -9,10 +9,18 @@ class Base(object):
 
     def __init__(self, config=None):
         self.set_config(config)
-        self.setup_logging(logging.INFO)
+        if config is not None:
+            if self.is_debug():
+                self.setup_logging(logging.DEBUG)
+            else:
+                self.setup_logging(logging.INFO)
 
     def set_config(self, config):
         self.config = config
+        if self.is_debug():
+            self.setup_logging(logging.DEBUG)
+        else:
+            self.setup_logging(logging.INFO)
 
     def setup_logging(self, loglevel):
         logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
