@@ -8,8 +8,8 @@ class Base(object):
     _handler = TimedRotatingFileHandler(f'logs/firestone-lab-{__name__}.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
 
     def __init__(self, config=None):
-        self.setup_logging(logging.INFO)
         self.set_config(config)
+        self.setup_logging(logging.INFO)
 
     def set_config(self, config):
         self.config = config
@@ -35,5 +35,10 @@ class Base(object):
     def job(self, stock_zh_a_spot_em_df):
         return stock_zh_a_spot_em_df, False
     
+    def is_debug(self):
+        return self.config is not None and self.config.getboolean('trade', 'debug')
     
-    
+
+    def debug(self, message):
+        if self.is_debug():
+            self._logger.debug(message)

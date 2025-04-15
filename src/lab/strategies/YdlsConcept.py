@@ -39,7 +39,9 @@ class YdlsConcept(Ydls):
                 (pre_df['开盘涨幅'] >= self.open_percent_min) 
                 & (pre_df['开盘涨幅'] <= self.open_percent_max)
             ]
-            match_df = pre_df[pre_df['代码'].isin(self.target_codes['代码'])]
+            self.debug(f'开盘涨幅 filter: {len(pre_df)}')
+            match_df = pre_df[pre_df.index.isin(self.target_codes['代码'])]
+            self.debug(f'concept filter: {len(match_df)}')
             if not match_df.empty:
                 return match_df, True
         return pre_df, False
