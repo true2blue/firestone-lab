@@ -34,12 +34,12 @@ class YdlsConcept(Ydls):
     def job(self, stock_zh_a_spot_em_df):
         pre_df, status = super().job(stock_zh_a_spot_em_df)
         if status and self.target_codes is not None:
-            stock_zh_a_spot_em_df['开盘涨幅'] = (stock_zh_a_spot_em_df['今开'] - stock_zh_a_spot_em_df['昨收']) / stock_zh_a_spot_em_df['昨收'] * 100
-            stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[
-                (stock_zh_a_spot_em_df['开盘涨幅'] >= self.open_percent_min) 
-                & (stock_zh_a_spot_em_df['开盘涨幅'] <= self.open_percent_max)
+            pre_df['开盘涨幅'] = (pre_df['今开'] - pre_df['昨收']) / pre_df['昨收'] * 100
+            pre_df = pre_df[
+                (pre_df['开盘涨幅'] >= self.open_percent_min) 
+                & (pre_df['开盘涨幅'] <= self.open_percent_max)
             ]
-            match_df = stock_zh_a_spot_em_df[stock_zh_a_spot_em_df['代码'].isin(self.target_codes['代码'])]
+            match_df = pre_df[pre_df['代码'].isin(self.target_codes['代码'])]
             if not match_df.empty:
                 return match_df, True
         return pre_df, False
