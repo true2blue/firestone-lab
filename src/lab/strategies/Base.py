@@ -12,7 +12,7 @@ class Base(object):
 
     def set_config(self, config):
         self.config = config
-        if self.config is None:
+        if self.config is not None:
             if self.is_debug():
                 self.setup_logging(logging.DEBUG)
             else:
