@@ -140,7 +140,7 @@ if __name__ == '__main__':
     interval = 3
     app = None
     try:
-        app = App([YdlsConcept()])
+        app = App([Ydls()])
         proxy = None
         if app.is_use_proxy():
             pm = ProxyManager()
