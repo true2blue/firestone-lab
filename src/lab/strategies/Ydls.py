@@ -43,10 +43,12 @@ class Ydls(Base):
         #     oldest_datetime = orginal_df.index.get_level_values('datetime').unique()[0]
         #     orginal_df = orginal_df[orginal_df.index.get_level_values('datetime') != oldest_datetime]
         self.debug(f'basic filter: {len(stock_zh_a_spot_em_df)}')
+        stock_zh_a_spot_em_df_copy = stock_zh_a_spot_em_df
         if len(self.orginal_df) == self.window:
             stock_zh_a_spot_em_df['涨跌幅(window)'] = (self.orginal_df[-1]['涨跌幅'] - self.orginal_df[-self.window]['涨跌幅'])
             stock_zh_a_spot_em_df['成交额(window)'] = (self.orginal_df[-1]['成交额'] - self.orginal_df[-self.window]['成交额'])
             stock_zh_a_spot_em_df['前期振幅'] = self.orginal_df[-self.window]['振幅']
+            stock_zh_a_spot_em_df_copy = stock_zh_a_spot_em_df.copy()
             # print(stock_zh_a_spot_em_df[['时间', '涨跌幅(window)']])
             stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['涨跌幅(window)'] >= self.period_percent_min)]
             self.debug(f'涨跌幅(window) filter: {stock_zh_a_spot_em_df if len(stock_zh_a_spot_em_df) > 0 else 0}')
@@ -62,4 +64,4 @@ class Ydls(Base):
             self.debug(f'振幅 filter: {stock_zh_a_spot_em_df if len(stock_zh_a_spot_em_df) > 0 else 0}')
             if not match_df.empty:
                 return match_df, True
-        return stock_zh_a_spot_em_df, False
+        return stock_zh_a_spot_em_df_copy, False
