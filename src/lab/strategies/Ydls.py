@@ -49,17 +49,17 @@ class Ydls(Base):
             stock_zh_a_spot_em_df['前期振幅'] = self.orginal_df[-self.window]['振幅']
             # print(stock_zh_a_spot_em_df[['时间', '涨跌幅(window)']])
             stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['涨跌幅(window)'] >= self.period_percent_min)]
-            self.debug(f'涨跌幅(window) filter: {len(stock_zh_a_spot_em_df)}')
+            self.debug(f'涨跌幅(window) filter: {stock_zh_a_spot_em_df if len(stock_zh_a_spot_em_df) > 0 else 0}')
             stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['涨跌幅'] <= self.percent_max) & (stock_zh_a_spot_em_df['涨跌幅'] >= self.percent_min)]
-            self.debug(f'涨跌幅 filter: {len(stock_zh_a_spot_em_df)}')
+            self.debug(f'涨跌幅 filter: {stock_zh_a_spot_em_df if len(stock_zh_a_spot_em_df) > 0 else 0}')
             stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['成交额(window)'] >= self.amount_min)]
-            self.debug(f'成交额(window) filter: {len(stock_zh_a_spot_em_df)}')
+            self.debug(f'成交额(window) filter: {stock_zh_a_spot_em_df if len(stock_zh_a_spot_em_df) > 0 else 0}')
             stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['最高'] == stock_zh_a_spot_em_df['最新价'])]
-            self.debug(f'最高 = 最新价 filter: {len(stock_zh_a_spot_em_df)}')
+            self.debug(f'最高 = 最新价 filter: {stock_zh_a_spot_em_df if len(stock_zh_a_spot_em_df) > 0 else 0}')
             stock_zh_a_spot_em_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['前期振幅'] <= self.high_low_percent_previous_max)]
-            self.debug(f'前期振幅 filter: {len(stock_zh_a_spot_em_df)}')
+            self.debug(f'前期振幅 filter: {stock_zh_a_spot_em_df if len(stock_zh_a_spot_em_df) > 0 else 0}')
             match_df = stock_zh_a_spot_em_df[(stock_zh_a_spot_em_df['振幅'] >= self.high_low_percent_min) & (stock_zh_a_spot_em_df['振幅'] >= stock_zh_a_spot_em_df['前期振幅'] * self.ratio_high_low_percent)]
-            self.debug(f'振幅 filter: {len(stock_zh_a_spot_em_df)}')
+            self.debug(f'振幅 filter: {stock_zh_a_spot_em_df if len(stock_zh_a_spot_em_df) > 0 else 0}')
             if not match_df.empty:
                 return match_df, True
         return stock_zh_a_spot_em_df, False
