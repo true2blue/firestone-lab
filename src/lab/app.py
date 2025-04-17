@@ -157,7 +157,7 @@ if __name__ == '__main__':
                         App._logger.error('no data')
                         time.sleep(interval)
                         continue
-                    res = app.run(stock_zh_a_spot_em_df)
+                    res = app.run(stock_zh_a_spot_em_df, timeStr=timeStr)
                     if res['state'] != 'nodata':
                         App._logger.info(res)
                     if res['state'] == 'complete':
