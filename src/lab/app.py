@@ -112,7 +112,7 @@ class App(object):
                     self.add_match(index)
                     rows.append(row)
                     if self.need_trade():
-                        price = Util.calc_high_limit(row['昨收'])
+                        price = Util.calc_high_limit(row['最新价'], row['昨收'])
                         volumne = self.get_buy_volume(price)
                         if volumne >= 100:
                             res = self.trade.createDelegate(index, row['名称'], price, volumne, 'buy')
@@ -137,7 +137,7 @@ class App(object):
         return result
 
 if __name__ == '__main__':
-    interval = 6
+    interval = 15
     app = None
     try:
         app = App([Ydls()])
