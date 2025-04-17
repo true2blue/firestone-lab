@@ -21,6 +21,12 @@ class TestApp(unittest.TestCase):
     def is_match_time(self, row, time):
         return row['时间'] == time
     
+    def test_read_target_codes(self):
+        target_codes = self.ydlsConcept.read_target_codes()
+        self.assertIsInstance(target_codes, pd.DataFrame)
+        self.assertGreater(len(target_codes), 0)
+        self.assertGreater(len(target_codes['代码']), 0)
+    
     def test_job(self):
         res_df = None
         status = False
