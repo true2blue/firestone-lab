@@ -5,7 +5,7 @@ from datetime import datetime
 class Base(object):
 
     _logger = logging.getLogger(__name__)
-    _handler = TimedRotatingFileHandler(f'logs/firestone-lab-{__name__}.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
+    _handler = TimedRotatingFileHandler(f'logs/firestone-lab.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
 
     def __init__(self, config=None):
         self.set_config(config)
